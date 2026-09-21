@@ -1,11 +1,11 @@
-##########################################################
-##########################################################
+##############################################################
+##############################################################
 # Independent risk factors and the risk of false positives
-#
-# 28 October 2025
-# Markus Huber (markus.huber@insel.ch)
-##########################################################
-##########################################################
+# Markus Huber* and Ulrike Stamer
+# *Corresponding author:  Markus Huber (markus.huber@insel.ch)
+# R code version: 21 Sep 2026 (Markus Huber)
+##############################################################
+##############################################################
 
 #######
 # setup
@@ -18,12 +18,17 @@ library(pCalibrate)
 library(flextable)
 library(compareGroups)
 
+setwd("T:/Research KAS/M. Huber/BAYES PAIN/AA/revisions2")
+
 ######
 # data
 ######
 
+# load the internal R data set "pain"
 data("pain")
 
+# transform data, e.g. define a binary outcome and a binary CCI index
+# complete case analysis
 df <- pain %>% 
   transmute(
     outcome         = case_when(PAIN_INTENSITY_AVERAGE.FOLLOW_UP>=7~1,TRUE~0),
@@ -111,7 +116,10 @@ df.equal.cci = data.frame(
 
 mycol = ggsci::pal_jama()(2)
 
+########
 # Figure
+########
+
 df.fpr %>% 
   ggplot(aes(x=pr.H1,y=fpr,color = type,fill=type))+
   geom_hline(yintercept = 0.05,linetype="dashed",color="darkgrey")+
@@ -129,6 +137,6 @@ df.fpr %>%
   scale_x_continuous(n.breaks = 10,labels = scales::percent, expand = c(0.02, 0.02))+
   scale_y_continuous(n.breaks = 10,labels = scales::percent, expand = c(0.02, 0.02))+
   xlab("Probability of a real effect: P(H1)")+
-  ylab("False positive risk (FPR)")
+  ylab("Minimum false positive risk (minFPR)")
 
-ggsave("figure1.jpeg",dpi=600,width = 7.4,height=4.7)
+ggsave("figure.jpeg",dpi=600,width = 7.4,height=4.9)
